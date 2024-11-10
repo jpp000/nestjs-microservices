@@ -4,9 +4,10 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { AUTH_SERVICE } from '../constants';
 import { ClientProxy } from '@nestjs/microservices';
+import { UserDto } from '../dto';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -16,10 +17,20 @@ export class JwtAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const jwt = context.switchToHttp().getRequest().cookies?.Authentication;
+
     if (!jwt) {
       return false;
     }
 
-    this.authClient.send('', {});
+    return this.authClient
+      .send<UserDto>('authenticate', {
+        Authentication: jwt,
+      })
+      .pipe(
+        tap((res) => {
+          context.switchToHttp().getRequest().user = res;
+        }),
+        map(() => true),
+      );
   }
 }
