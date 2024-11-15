@@ -7,22 +7,25 @@ import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { GetUserDto } from './dto/get-user.dto';
+import { Role, User } from '@app/common';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async create(createUserDto: CreateUserDto) {
-    await this.validateCreateUserDto(createUserDto);
-    return this.usersRepository.create({
-      ...createUserDto,
-      password: await bcrypt.hash(createUserDto.password, 10),
+  async create(createUser: CreateUserDto) {
+    await this.validateCreateUser(createUser);
+    const user = new User({
+      ...createUser,
+      password: await bcrypt.hash(createUser.password, 10),
+      roles: createUser.roles.map((roleDto) => new Role(roleDto)),
     });
+    return this.usersRepository.create(user);
   }
 
-  private async validateCreateUserDto(createUserDto: CreateUserDto) {
+  private async validateCreateUser(createUser: CreateUserDto) {
     try {
-      await this.usersRepository.findOne({ email: createUserDto.email });
+      await this.usersRepository.findOne({ email: createUser.email });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       return;
@@ -41,8 +44,8 @@ export class UsersService {
     return user;
   }
 
-  async getUser(getUserDto: GetUserDto) {
-    return this.usersRepository.findOne(getUserDto);
+  async getUser(getUser: GetUserDto) {
+    return this.usersRepository.findOne(getUser);
   }
 
   async getAllUsers() {

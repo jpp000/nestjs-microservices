@@ -3,7 +3,7 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationRepository } from './reservations.repository';
 import { ClientProxy } from '@nestjs/microservices';
-import { PAYMENTS_SERVICE, UserDto } from '@app/common';
+import { PAYMENTS_SERVICE, User } from '@app/common';
 import { map } from 'rxjs';
 import { Reservation } from './models/reservation.entity';
 
@@ -16,7 +16,7 @@ export class ReservationsService {
 
   create(
     createReservationDto: CreateReservationDto,
-    { email, _id: userId }: UserDto,
+    { email, id: userId }: User,
   ) {
     return this.paymentService
       .send('create-charge', { ...createReservationDto.charge, email })
