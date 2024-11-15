@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsEmail,
   IsOptional,
   IsStrongPassword,
@@ -15,7 +14,6 @@ export class CreateUserDto {
   @IsStrongPassword()
   password: string;
 
-  @IsArray()
   @IsOptional()
   @ValidateNested()
   @Type(() => RoleDto)
