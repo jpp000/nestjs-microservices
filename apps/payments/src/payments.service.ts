@@ -20,7 +20,11 @@ export class PaymentsService {
     private readonly notificationsService: ClientProxy,
   ) {}
 
-  async createCharge({ email, amount }: PaymentsCreateChargeDto) {
+  async createCharge(
+    { email, amount }: PaymentsCreateChargeDto,
+    channel: any,
+    message: any,
+  ) {
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: amount * 100,
       confirm: true,
@@ -36,6 +40,8 @@ export class PaymentsService {
       email,
       text: `Your payment of R$${amount} has completed successfully`,
     });
+
+    channel.ack(message);
 
     return paymentIntent;
   }
