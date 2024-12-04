@@ -33,5 +33,6 @@ RUN npm i -g pnpm
 RUN pnpm i --prod
 
 COPY --from=development /usr/src/app/dist ./dist
+COPY proto proto
 
 CMD [ "node", "dist/apps/auth/main" ]
