@@ -6,14 +6,18 @@ import {
 } from 'class-validator';
 import { CardDto } from './card.dto';
 import { Type } from 'class-transformer';
+import { Field, InputType } from '@nestjs/graphql';
 
+@InputType()
 export class CreateChargeDto {
   @IsDefined()
   @IsNotEmptyObject()
   @ValidateNested()
+  @Field(() => CardDto)
   @Type(() => CardDto)
   card: CardDto;
 
   @IsNumber()
+  @Field()
   amount: number;
 }
