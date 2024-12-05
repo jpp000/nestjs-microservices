@@ -39,4 +39,8 @@ export class PaymentsService {
 
     return paymentIntent;
   }
+
+  async findAllPayments() {
+    return (await this.stripe.paymentIntents.list()).data;
+  }
 }
