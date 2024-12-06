@@ -6,10 +6,13 @@ COPY ./package.json ./
 COPY ./pnpm-lock.yaml ./
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./nest-cli.json ./nest-cli.json
+COPY ./apps/auth/prisma ./prisma
 
 RUN npm i -g pnpm
 
 RUN pnpm i
+
+RUN pnpm prisma generate
 
 COPY apps/auth apps/auth
 COPY libs libs
@@ -34,4 +37,4 @@ RUN pnpm i --prod
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD [ "node", "dist/apps/auth/main" ]
+CMD [ "pnpm", "run", "start:prod", "dist/apps/auth/main" ]
